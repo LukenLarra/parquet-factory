@@ -25,7 +25,7 @@ import (
 
 type testTableSchema struct {
 	ID          string `parquet:"name=id, type=BYTE_ARRAY, encoding=PLAIN_DICTIONARY"`
-	CollectedAt int64  `parquet:"name=collected_at, type=INT64, convertedtype=TIMESTAMP_MILLIS"`
+	CollectedAt int64  `parquet:"name=collected_at, type=INT64, logicaltype=TIMESTAMP, logicaltype.isadjustedtoutc=true, logicaltype.unit=MILLIS"`
 }
 
 var testRow = testTableSchema{

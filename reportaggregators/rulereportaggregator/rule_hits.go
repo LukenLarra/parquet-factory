@@ -32,7 +32,7 @@ const ruleHitsTableName = "rule_hits"
 type RuleHitTable struct {
 	ClusterID   string `parquet:"name=cluster_id, type=BYTE_ARRAY, encoding=PLAIN_DICTIONARY"`
 	RuleID      string `parquet:"name=rule_id, type=BYTE_ARRAY, encoding=PLAIN_DICTIONARY"`
-	CollectedAt int64  `parquet:"name=collected_at, type=INT64, convertedtype=TIMESTAMP_MILLIS"`
+	CollectedAt int64  `parquet:"name=collected_at, type=INT64, logicaltype=TIMESTAMP, logicaltype.isadjustedtoutc=true, logicaltype.unit=MILLIS"`
 	ArchivePath string `parquet:"name=archive_path, type=BYTE_ARRAY, encoding=PLAIN"`
 }
 
