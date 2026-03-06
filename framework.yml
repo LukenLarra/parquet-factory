@@ -1,0 +1,59 @@
+# Copyright 2024 Red Hat, Inc
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# BDD Framework Configuration for parquet-factory
+# =================================================
+#
+# This file configures ONLY the test execution.
+# Infrastructure services (Kafka, MinIO, Pushgateway) are declared in
+# docker-compose.yml and must be started in the CI workflow before the
+# framework runs — see .github/workflows/bdd.yaml for the full reference.
+
+project:
+  name: "parquet-factory"
+  version: "1.0.0"
+
+tests:
+  enabled: true
+  path: "tests/bdd"
+  command: "behave tests/bdd/features --no-capture --format pretty --junit --junit-directory reports/junit"
+  bdd:
+    features: "tests/bdd/features"
+    steps:
+      - "tests/bdd/steps"
+      - "insights-behavioral-spec/steps"
+    environment: "insights-behavioral-spec/features/environment.py"
+  env:
+    # Names expected by insights-behavioral-spec/features/environment.py
+    KAFKA_HOST: "localhost"
+    KAFKA_PORT: "9092"
+    S3_TYPE: "minio"
+    S3_HOST: "localhost"
+    S3_PORT: "9000"
+    S3_ACCESS_KEY_ID: "test_access_key"
+    S3_SECRET_ACCESS_KEY: "test_secret_access_key"
+    S3_BUCKET: "test"
+    S3_OLDER_MINIO_COMPATIBILITY: "1"
+
+    # Env vars for the parquet-factory binary itself (inherited by subprocess in steps)
+    PARQUET_FACTORY__KAFKA_RULES__ADDRESS: "localhost:9092"
+    PARQUET_FACTORY__S3__ENDPOINT: "localhost:9000"
+    PARQUET_FACTORY__S3__BUCKET: "test"
+    PARQUET_FACTORY__S3__ACCESS_KEY: "test_access_key"
+    PARQUET_FACTORY__S3__SECRET_KEY: "test_secret_access_key"
+    PARQUET_FACTORY__S3__USE_SSL: "false"
+    PARQUET_FACTORY__S3__PREFIX: "fleet_aggregations"
+    PARQUET_FACTORY__S3__REGION: "us-east-1"
+    PARQUET_FACTORY__METRICS__GATEWAY_URL: "localhost:9091"
+    PARQUET_FACTORY_BIN: "./parquet-factory"

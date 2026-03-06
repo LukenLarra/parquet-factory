@@ -53,9 +53,9 @@ style: fmt lint shellcheck ## Run all the formatting related commands (fmt, lint
 run: ${BINARY} ## Build the project and executes the binary
 	./$^
 
-integration_tests: ## Run all integration tests
-	@echo "Running all integration tests"
-	@./test.sh
+integration_tests: build ## Run BDD integration tests locally (requires docker-compose up)
+	@echo "Running BDD integration tests"
+	@behave tests/bdd/features --no-capture --format pretty
 
 license: install_addlicense
 	addlicense -c "Red Hat, Inc" -l "apache" -v ./
