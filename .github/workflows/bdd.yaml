@@ -1,17 +1,153 @@
-name: BDD tests
+# Copyright 2024 Red Hat, Inc
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+name: BDD tests
 
 on:
   push:
     branches: ["main"]
   pull_request:
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   bdd:
     name: BDD tests
-    uses: RedHatInsights/processing-tools/.github/workflows/bdd.yaml@master
-    with:
-      service: parquet-factory
-      use_kafka: true
-      use_minio: true
-      use_pushgateway: true
+    runs-on: ubuntu-latest
+
+    services:
+      kafka:
+        image: confluentinc/cp-kafka
+        ports:
+          - 9092:9092
+        env:
+          KAFKA_NODE_ID: 1
+          KAFKA_PROCESS_ROLES: broker,controller
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+          KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+          KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+          KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+          KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
+          CLUSTER_ID: test_id
+        options: >-
+          --health-cmd "kafka-broker-api-versions --bootstrap-server localhost:9092"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 10
+
+      minio:
+        image: minio/minio
+        ports:
+          - 9000:9000
+          - 9001:9001
+        env:
+          MINIO_ROOT_USER: test_access_key
+          MINIO_ROOT_PASSWORD: test_secret_access_key
+        options: >-
+          --health-cmd "curl -sf http://localhost:9000/minio/health/live"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --entrypoint sh
+          -c "minio server /data --console-address :9001"
+
+      pushgateway:
+        image: prom/pushgateway
+        ports:
+          - 9091:9091
+        options: >-
+          --health-cmd "wget -qO- http://localhost:9091/-/healthy"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Names expected by insights-behavioral-spec/features/environment.py
+      KAFKA_HOST: "localhost"
+      KAFKA_PORT: "9092"
+      S3_TYPE: "minio"
+      S3_HOST: "localhost"
+      S3_PORT: "9000"
+      S3_ACCESS_KEY_ID: "test_access_key"
+      S3_SECRET_ACCESS_KEY: "test_secret_access_key"
+      S3_BUCKET: "test"
+      S3_OLDER_MINIO_COMPATIBILITY: "1"
+      # Env vars for the parquet-factory binary itself (inherited by subprocess in steps)
+      PARQUET_FACTORY__KAFKA_RULES__ADDRESS: "localhost:9092"
+      PARQUET_FACTORY__S3__ENDPOINT: "localhost:9000"
+      PARQUET_FACTORY__S3__BUCKET: "test"
+      PARQUET_FACTORY__S3__ACCESS_KEY: "test_access_key"
+      PARQUET_FACTORY__S3__SECRET_KEY: "test_secret_access_key"
+      PARQUET_FACTORY__S3__USE_SSL: "false"
+      PARQUET_FACTORY__S3__PREFIX: "fleet_aggregations"
+      PARQUET_FACTORY__S3__REGION: "us-east-1"
+      PARQUET_FACTORY__METRICS__GATEWAY_URL: "localhost:9091"
+      PARQUET_FACTORY_BIN: "./parquet-factory"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Optionally checkout shared steps from insights-behavioral-spec.
+      # continue-on-error ensures the workflow is not blocked if the repo
+      # has no shared steps applicable to parquet-factory.
+      - name: Checkout shared steps from insights-behavioral-spec
+        uses: actions/checkout@v5
+        with:
+          repository: RedHatInsights/insights-behavioral-spec
+          path: insights-behavioral-spec
+        continue-on-error: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Generate mocks
+        run: make gen_mocks
+
+      - name: Build parquet-factory binary
+        run: ./build.sh
+
+      - name: Create Kafka topics
+        run: |
+          docker run --rm --network host confluentinc/cp-kafka \
+            kafka-topics --bootstrap-server localhost:9092 \
+            --create --if-not-exists \
+            --topic incoming_rules_topic --partitions 2
+          docker run --rm --network host confluentinc/cp-kafka \
+            kafka-topics --bootstrap-server localhost:9092 \
+            --create --if-not-exists \
+            --topic incoming_features_topic --partitions 4
+
+      - name: Create MinIO bucket
+        run: |
+          docker run --rm --network host minio/mc \
+            config host add minio http://localhost:9000 test_access_key test_secret_access_key
+          docker run --rm --network host minio/mc mb minio/test
+
+      - name: Run BDD Framework
+        uses: LukenLarra/RedHat-BDD-Framework@main
+        with:
+          service: "parquet-factory"
