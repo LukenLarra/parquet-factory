@@ -8,7 +8,10 @@ import importlib.util
 import os
 import sys
 
-_SHARED_REPO_DIR = os.path.join(os.getcwd(), "insights-behavioral-spec")
+# Resolve relative to this file's location (tests/bdd/steps/ → project root)
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.normpath(os.path.join(_THIS_DIR, "..", "..", ".."))
+_SHARED_REPO_DIR = os.path.join(_PROJECT_ROOT, "insights-behavioral-spec")
 _SHARED_STEPS_DIR = os.path.join(_SHARED_REPO_DIR, "steps")
 
 if os.path.isdir(_SHARED_STEPS_DIR):

@@ -12,3 +12,6 @@ minio
 pyarrow
 pandas
 numpy
+
+# Required by insights-behavioral-spec/features/environment.py (imported unconditionally)
+psycopg2-binary
