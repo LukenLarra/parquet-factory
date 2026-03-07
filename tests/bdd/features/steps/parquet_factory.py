@@ -14,7 +14,7 @@ from behave import then, when
 PARQUET_FACTORY_BINARY = "parquet-factory"
 
 # path do directory with rules results templates to be used
-DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", "test_data")
+DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", "testdata")
 
 
 @when('I set the environment variable "{env_name}" to "{env_value}"')
