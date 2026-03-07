@@ -30,7 +30,7 @@ tests:
   command: "python -m behave tests/bdd/features --junit --junit-directory reports/junit --format pretty"
   bdd:
     features: "tests/bdd/features"
-    steps: "tests/bdd/steps"
+    steps: "tests/bdd/features/steps"
     environment: "tests/bdd/features/environment.py"
   env:
     # Names expected by insights-behavioral-spec/features/environment.py
