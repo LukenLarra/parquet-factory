@@ -94,15 +94,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      # Optionally checkout shared steps from insights-behavioral-spec.
-      # continue-on-error ensures the workflow is not blocked if the repo
-      # has no shared steps applicable to parquet-factory.
       - name: Checkout shared steps from insights-behavioral-spec
         uses: actions/checkout@v5
         with:
           repository: RedHatInsights/insights-behavioral-spec
           path: insights-behavioral-spec
-        continue-on-error: true
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -148,3 +144,4 @@ jobs:
         uses: LukenLarra/RedHat-BDD-Framework@update-framework-config-for-external-use
         with:
           service: "parquet-factory"
+          test_requirements: "tests/bdd/requirements.txt"
