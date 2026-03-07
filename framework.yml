@@ -30,11 +30,10 @@ tests:
   command: "behave tests/bdd/features --no-capture --format pretty --junit --junit-directory reports/junit"
   bdd:
     features: "tests/bdd/features"
-    steps:
-      - "tests/bdd/steps"
-      - "insights-behavioral-spec/steps"
+    steps: "tests/bdd/steps"
     environment: "insights-behavioral-spec/features/environment.py"
   env:
+    PYTHONPATH: "insights-behavioral-spec/steps"
     # Names expected by insights-behavioral-spec/features/environment.py
     KAFKA_HOST: "localhost"
     KAFKA_PORT: "9092"
