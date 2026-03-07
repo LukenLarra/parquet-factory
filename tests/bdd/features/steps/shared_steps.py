@@ -10,7 +10,7 @@ import sys
 
 # Resolve relative to this file's location (tests/bdd/features/steps/ → project root)
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.normpath(os.path.join(_THIS_DIR, "..", "..", ".."))
+_PROJECT_ROOT = os.path.normpath(os.path.join(_THIS_DIR, "..", "..", "..", ".."))
 _SHARED_REPO_DIR = os.path.join(_PROJECT_ROOT, "insights-behavioral-spec")
 _SHARED_STEPS_DIR = os.path.join(_SHARED_REPO_DIR, "features", "steps")
 
