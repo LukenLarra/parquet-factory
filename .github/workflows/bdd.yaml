@@ -67,6 +67,7 @@ jobs:
           --health-retries 5
 
     env:
+      PYTHONPATH: "insights-behavioral-spec/steps:insights-behavioral-spec"
       # Names expected by insights-behavioral-spec/features/environment.py
       KAFKA_HOST: "localhost"
       KAFKA_PORT: "9092"
