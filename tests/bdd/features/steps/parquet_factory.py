@@ -11,7 +11,7 @@ from threading import Timer
 from behave import then, when
 
 # parquet-factory binary file name
-PARQUET_FACTORY_BINARY = "parquet-factory"
+PARQUET_FACTORY_BINARY = os.environ.get("PARQUET_FACTORY_BIN", "parquet-factory")
 
 # path do directory with rules results templates to be used
 DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", "testdata")
