@@ -27,7 +27,7 @@ project:
 tests:
   enabled: true
   path: "tests/bdd"
-  command: "behave features --no-capture --format pretty --junit --junit-directory reports/junit"
+  command: "behave features --steps steps --no-capture --format pretty --junit --junit-directory reports/junit"
   bdd:
     features: "tests/bdd/features"
     steps: "tests/bdd/steps"
