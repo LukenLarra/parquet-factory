@@ -26,12 +26,12 @@ project:
 
 tests:
   enabled: true
-  path: "tests/bdd"
-  command: "behave --no-capture --format pretty --junit --junit-directory reports/junit"
+  path: "."
+  command: "python -m behave tests/bdd/features --junit --junit-directory reports/junit --format pretty"
   bdd:
     features: "tests/bdd/features"
     steps: "tests/bdd/steps"
-    environment: "insights-behavioral-spec/features/environment.py"
+    environment: "tests/bdd/features/environment.py"
   env:
     # Names expected by insights-behavioral-spec/features/environment.py
     KAFKA_HOST: "localhost"
