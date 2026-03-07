@@ -144,4 +144,4 @@ jobs:
         uses: LukenLarra/RedHat-BDD-Framework@update-framework-config-for-external-use
         with:
           service: "parquet-factory"
-          test_requirements: "tests/bdd/requirements.txt"
+          test_requirements: "insights-behavioral-spec/requirements.txt"
