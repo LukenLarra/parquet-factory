@@ -1,2 +1,14 @@
--r insights-behavioral-spec/requirements.txt
+# BDD test dependencies for parquet-factory
+# behave, requests and PyYAML are provided by the BDD framework — do NOT add them here.
 
+# Kafka interaction (used by insights-behavioral-spec/src/kafka_util.py)
+kafka-python-ng
+
+# S3/MinIO client (used by insights-behavioral-spec S3 steps; S3_TYPE=minio)
+boto3
+minio
+
+# Parquet file inspection and data verification (used by insights-behavioral-spec parquet steps)
+pyarrow
+pandas
+numpy
