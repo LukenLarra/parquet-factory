@@ -144,6 +144,6 @@ jobs:
           docker run --rm --network host minio/mc mb minio/test
 
       - name: Run BDD Framework
-        uses: LukenLarra/RedHat-BDD-Framework@main
+        uses: LukenLarra/RedHat-BDD-Framework@update-framework-config-for-external-use
         with:
           service: "parquet-factory"
