@@ -8,9 +8,12 @@ import importlib.util
 import os
 import sys
 
-_SHARED_STEPS_DIR = os.path.join(os.getcwd(), "insights-behavioral-spec", "steps")
+_SHARED_REPO_DIR = os.path.join(os.getcwd(), "insights-behavioral-spec")
+_SHARED_STEPS_DIR = os.path.join(_SHARED_REPO_DIR, "steps")
 
 if os.path.isdir(_SHARED_STEPS_DIR):
+    if _SHARED_REPO_DIR not in sys.path:
+        sys.path.insert(0, _SHARED_REPO_DIR)
     if _SHARED_STEPS_DIR not in sys.path:
         sys.path.insert(0, _SHARED_STEPS_DIR)
 
