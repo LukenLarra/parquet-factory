@@ -119,9 +119,8 @@ jobs:
           docker run -d \
             --name pushgateway \
             -p 9091:9091 \
-            prom/pushgateway \
-            --web.enable-admin-api
-          timeout 30 bash -c 'until wget -qO- http://localhost:9091/-/healthy; do sleep 2; done'
+            prom/pushgateway --web.enable-admin-api
+          timeout 30 bash -c 'until wget -qO- http://localhost:9091/-/healthy 2>/dev/null; do sleep 1; done'
 
       - name: Create Kafka topics
         run: |
