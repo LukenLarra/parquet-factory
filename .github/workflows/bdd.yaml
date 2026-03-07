@@ -56,17 +56,6 @@ jobs:
           --health-timeout 10s
           --health-retries 10
 
-      pushgateway:
-        image: prom/pushgateway
-        ports:
-          - 9091:9091
-        options: >-
-          --health-cmd "wget -qO- http://localhost:9091/-/healthy"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        command: --web.enable-admin-api
-
     env:
       PYTHONPATH: "insights-behavioral-spec/features/src:insights-behavioral-spec/features/steps:insights-behavioral-spec/features:insights-behavioral-spec"
       # Names expected by insights-behavioral-spec/features/environment.py
@@ -98,9 +87,9 @@ jobs:
       - name: Checkout shared steps from insights-behavioral-spec
         uses: actions/checkout@v5
         with:
-            repository: LukenLarra/insights-behavioral-spec
-            ref: descentralize-bdd-test-execution
-            path: insights-behavioral-spec
+          repository: LukenLarra/insights-behavioral-spec
+          ref: descentralize-bdd-test-execution
+          path: insights-behavioral-spec
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -124,6 +113,15 @@ jobs:
             -e MINIO_ROOT_PASSWORD=test_secret_access_key \
             minio/minio server /data --console-address :9001
           timeout 60 bash -c 'until curl -sf http://localhost:9000/minio/health/live; do sleep 2; done'
+
+      - name: Start Pushgateway
+        run: |
+          docker run -d \
+            --name pushgateway \
+            -p 9091:9091 \
+            prom/pushgateway \
+            --web.enable-admin-api
+          timeout 30 bash -c 'until wget -qO- http://localhost:9091/-/healthy; do sleep 2; done'
 
       - name: Create Kafka topics
         run: |
