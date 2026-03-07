@@ -65,6 +65,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        command: --web.enable-admin-api
 
     env:
       PYTHONPATH: "insights-behavioral-spec/features/src:insights-behavioral-spec/features/steps:insights-behavioral-spec/features:insights-behavioral-spec"
