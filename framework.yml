@@ -33,6 +33,7 @@ tests:
     steps: "tests/bdd/features/steps"
     environment: "tests/bdd/features/environment.py"
   env:
+    PYTHONPATH: "insights-behavioral-spec/features/steps:insights-behavioral-spec/features:insights-behavioral-spec"
     # Names expected by insights-behavioral-spec/features/environment.py
     KAFKA_HOST: "localhost"
     KAFKA_PORT: "9092"
