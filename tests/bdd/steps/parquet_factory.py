@@ -9,8 +9,6 @@ import time
 from threading import Timer
 
 from behave import then, when
-from src import kafka_util
-from src.process_output import path_from_context
 
 # parquet-factory binary file name
 PARQUET_FACTORY_BINARY = "parquet-factory"
@@ -41,6 +39,7 @@ def run_parquet_factory(context, timeout_sec: int) -> None:
         environ.update(context.parquet_environment)
     environ["PARQUET_FACTORY__LOGGING__DEBUG"] = "false"
 
+    from src.process_output import path_from_context  # noqa: PLC0415
     stdout_path = path_from_context(context, "parquet-factory", "stdout")
     stderr_path = path_from_context(context, "parquet-factory", "stderr")
 
@@ -100,6 +99,7 @@ def send_rules_results_to_kafka(context, moment):
         "current": 0,
     }.get(moment, 0)
 
+    from src import kafka_util  # noqa: PLC0415
     with open(f"{DATA_DIRECTORY}/rules_message.json", "r") as payload_file:
         rules_payload = payload_file.read()
 
