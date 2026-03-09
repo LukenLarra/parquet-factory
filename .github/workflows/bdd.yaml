@@ -8,7 +8,7 @@ on:
 jobs:
   bdd:
     name: BDD tests
-    uses: LukenLarra/processing-tools/.github/workflows/bdd.yaml@bdd-framework-exec
+    uses: LukenLarra/processing-tools/.github/workflows/bdd.yaml@bdd-framework-integration
     with:
       service: parquet-factory
       use_kafka: true
