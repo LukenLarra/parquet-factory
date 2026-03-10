@@ -15,4 +15,3 @@ jobs:
       use_kafka: true
       use_minio: true
       use_pushgateway: true
-      bdd_config: "${{ github.workspace }}/insights-behavioral-spec/bdd-configs/parquet-factory-framework.yml"
