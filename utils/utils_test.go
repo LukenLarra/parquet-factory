@@ -80,7 +80,7 @@ func TestGetPathFromRawMsg(t *testing.T) {
 		if fileInfo.IsDir() {
 			return err
 		}
-		message, err := os.ReadFile(path) // #nosec G304
+		message, err := os.ReadFile(path) // #nosec G304 G122
 		assert.NoError(t, err)
 		archivePath, err := utils.GetPathFromRawMsg(message)
 		assert.NoError(t, err)
