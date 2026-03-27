@@ -1,15 +1,15 @@
 name: BDD tests
 
-
 on:
   push:
     branches: ["main"]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   bdd:
     name: BDD tests
-    uses: RedHatInsights/processing-tools/.github/workflows/bdd.yaml@master
+    uses: LukenLarra/processing-tools/.github/workflows/bdd.yaml@bdd-framework-integration
     with:
       service: parquet-factory
       use_kafka: true
