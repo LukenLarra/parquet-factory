@@ -15,4 +15,3 @@ jobs:
       use_kafka: true
       use_minio: true
       use_pushgateway: true
-      max_parallel: 3
