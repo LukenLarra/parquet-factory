@@ -9,7 +9,7 @@ on:
 jobs:
   bdd:
     name: BDD tests
-    uses: LukenLarra/processing-tools/.github/workflows/bdd.yaml@feature-parallel-execution
+    uses: LukenLarra/processing-tools/.github/workflows/bdd.yaml@main
     with:
       service: parquet-factory
       use_kafka: true
