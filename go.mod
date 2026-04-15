@@ -1,6 +1,6 @@
 module github.com/RedHatInsights/parquet-factory
 
-go 1.25.0
+go 1.25
 
 require (
 	github.com/IBM/sarama v1.47.0
